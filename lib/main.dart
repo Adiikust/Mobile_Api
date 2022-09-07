@@ -1,8 +1,15 @@
 
 
+import 'dart:io';
+import 'package:hive/hive.dart';
 import 'package:mobile_api/Controller/Export/export_screen.dart';
+import 'package:path_provider/path_provider.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Directory document = await getApplicationDocumentsDirectory();
+  Hive.init(document.path);
+  await Hive.openBox<String>("Adnan");
   runApp(const MyApp());
 }
 
