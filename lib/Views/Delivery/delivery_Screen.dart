@@ -1,7 +1,7 @@
 
 
 
-import 'dart:ffi';
+
 
 import 'package:hive/hive.dart';
 import 'package:flutter/services.dart';
@@ -22,6 +22,7 @@ class DeliveryScreen extends StatefulWidget {
 class _DeliveryScreenState extends State<DeliveryScreen> {
 
   late Box<String> storeMobileApiData;
+  String SelectedCurrentValue ="Change Status";
 
   final TextEditingController _scanArticleData =TextEditingController();
   final TextEditingController _textArticleData =TextEditingController();
@@ -61,10 +62,28 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
             //mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                  height: 60,
-                  width: double.infinity,
-                  color: AppColors.kButton,
+                width: double.infinity,
+                height: data.size.height * 0.060,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: Colors.black12,
+                    borderRadius:BorderRadius.circular(15)),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 5),
+                  child: DropdownButton<String>(
+                      underline: Container(),
+                      value: SelectedCurrentValue,
+                      items: const [
+                        DropdownMenuItem(value: 'Change Status',child:Text('Change Status'),),
+                        DropdownMenuItem(value: 'Delivered',child:Text('Delivered'),),
+                      ], onChanged: (value){
+                    setState((){
+                      SelectedCurrentValue = value!;
+                    });
+
+                  }),
                 ),
+              ),
               SizedBox(height: data.size.height * 0.04,),
               TextField(
                 controller: _scanArticleData,
@@ -76,7 +95,6 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                     hintText:"Enter Barcode Article Id",
                   )
                 ),
-              SizedBox(height: data.size.height * 0.04,),
               SizedBox(height: data.size.height * 0.04,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
@@ -144,15 +162,62 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                       shrinkWrap: true,
                       itemBuilder: (context,index){
                         final key = adnan.keys.toList()[index];
-                        final value = adnan.get(key);
-                        return Card(
-                          child: ListTile(
-                            title: Text("$key",style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-                            trailing: InkWell(
-                              onTap: (){
-                                storeMobileApiData.delete(key);
-                              },
-                              child: const Icon(Icons.delete),),
+
+                        return SizedBox(
+                          height: data.size.width * 0.1,
+                          width: double.infinity,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("$key",style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
+                                Row(children: [
+                                  ElevatedButton(
+                                      child: const Text("Saved"),
+                                      onPressed:(){
+                                        showDialog(context: context, builder: (BuildContext context){
+                                          return Dialog(
+                                            child: SizedBox(
+                                              height: 300,
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(10.0),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                     Center(child: Text("$key",style:const TextStyle(fontSize: 20,))),
+                                                    SizedBox(height: data.size.height * 0.04,),
+                                                    const Text("Name:",style:TextStyle(fontSize: 20),),
+                                                    SizedBox(height: data.size.height * 0.04,),
+                                                    const Text("Address:",style:TextStyle(fontSize: 20),),
+                                                    SizedBox(height: data.size.height * 0.04,),
+                                                    const Text("GPO:",style:TextStyle(fontSize: 20),),
+                                                    SizedBox(height: data.size.height * 0.04,),
+                                                    Center(
+                                                      child: ElevatedButton(
+                                                          onPressed: (){
+                                                            Navigator.of(context).pop();
+                                                          }, child: const Text("Close")),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          );
+
+                                        });
+                                      }
+                                  ),
+
+                                  SizedBox(width: data.size.width * 0.06,),
+                                  InkWell(
+                                    onTap: (){storeMobileApiData.delete(key);},
+                                    child: const Icon(Icons.delete,color: Colors.red,),),
+                                ],
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },
@@ -160,7 +225,6 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                     );
                   }
               ),
-
           ],
           ),
         ),
@@ -170,3 +234,16 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
     );
 }
 }
+/*Card(
+                          child: ListTile(
+                            title: Text("$key",style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
+                            trailing: InkWell(
+                              onTap: (){
+                                storeMobileApiData.delete(key);
+                              },
+                              child: const Icon(Icons.delete),),
+                          ),
+                        );*/
+/*  InkWell(
+                                    onTap: (){},
+                                    child: Text("Saved",style: TextStyle(fontSize: 15),)),*/

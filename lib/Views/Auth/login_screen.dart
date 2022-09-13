@@ -1,5 +1,12 @@
 
+
+
+
+import 'package:http/http.dart';
 import 'package:mobile_api/Controller/Export/export_screen.dart';
+import 'package:http/http.dart' as http;
+
+
 
 
 class LoginScreen extends StatefulWidget {
@@ -8,10 +15,34 @@ class LoginScreen extends StatefulWidget {
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
-TextEditingController _userNameController = TextEditingController();
-TextEditingController _passwordController = TextEditingController();
+
 
 class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _userNameController = TextEditingController();
+ final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> logIn(String username,password) async {
+  try{
+    Response response = await http.post(Uri.parse('http://58.65.169.108:999/MobileApp/Login'),
+  body: {
+    'strLoginName':username,
+    'strPasswordHash':password,
+
+},
+    );
+    if(response.statusCode ==200 ){
+      print("ok");
+      Navigator.push(context, MaterialPageRoute(builder: (context) => const   DeliveryScreen()));
+    }else{
+      print("not");
+    }
+      }
+      catch(e){
+    print(e.toString());
+  }
+}
+
+
   @override
   Widget build(BuildContext context) {
     final data = MediaQuery.of(context);
@@ -52,9 +83,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             SizedBox(height: data.size.height * 0.05,),
-            GestureDetector(
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const DeliveryScreen()));
+            InkWell(
+              onTap: () {
+                  logIn(_userNameController.text.toString(),_passwordController.text.toString());
               },
               child: Container(
                 height: 50,
@@ -79,4 +110,21 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+/*  Future<void> logIn() async {
+    if(_userNameController.text.isNotEmpty && _passwordController.text.isNotEmpty){
+      var response = await http.post(Uri.parse('http://58.65.169.108:999/api/values/Login?'),
+          body: ({
+            'username':_userNameController.text,
+            'password':_passwordController.text,}));
+
+      if(response.statusCode == 200){
+       // ignore: use_build_context_synchronously
+       Navigator.push(context, MaterialPageRoute(builder: (context) => const   DeliveryScreen()));
+      }
+    }else{
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Black Filed not Allowed ")));
+    }
+  }*/
 }
+
+
