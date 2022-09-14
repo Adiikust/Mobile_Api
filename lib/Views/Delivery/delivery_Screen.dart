@@ -1,8 +1,4 @@
 
-
-
-
-
 import 'package:hive/hive.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
@@ -11,22 +7,28 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:mobile_api/Controller/Export/export_screen.dart';
 
 class DeliveryScreen extends StatefulWidget {
-  const DeliveryScreen({Key? key}) : super(key: key);
+  late double personalID;
+  late dynamic location;
+  late double locationId;
+  DeliveryScreen({required double personalID,required dynamic location,required double locationId}){
+    this.personalID = personalID;
+    this.location = location;
+    this.locationId = locationId;
+
+  }
 
   @override
   State<DeliveryScreen> createState() => _DeliveryScreenState();
 }
-
-
 
 class _DeliveryScreenState extends State<DeliveryScreen> {
 
   late Box<String> storeMobileApiData;
   String SelectedCurrentValue ="Change Status";
 
+
   final TextEditingController _scanArticleData =TextEditingController();
   final TextEditingController _textArticleData =TextEditingController();
-
 
 
 
@@ -174,7 +176,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                                 Text("$key",style: const TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
                                 Row(children: [
                                   ElevatedButton(
-                                      child: const Text("Saved"),
+                                      child:  const Text("Saved"),
                                       onPressed:(){
                                         showDialog(context: context, builder: (BuildContext context){
                                           return Dialog(
@@ -188,11 +190,11 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                                                   children: [
                                                      Center(child: Text("$key",style:const TextStyle(fontSize: 20,))),
                                                     SizedBox(height: data.size.height * 0.04,),
-                                                    const Text("Name:",style:TextStyle(fontSize: 20),),
+                                                      Text(widget.personalID.toString(),style:const TextStyle(fontSize: 20),),
                                                     SizedBox(height: data.size.height * 0.04,),
-                                                    const Text("Address:",style:TextStyle(fontSize: 20),),
+                                                     Text(widget.location,style:const TextStyle(fontSize: 20),),
                                                     SizedBox(height: data.size.height * 0.04,),
-                                                    const Text("GPO:",style:TextStyle(fontSize: 20),),
+                                                     Text(widget.locationId.toString(),style:const TextStyle(fontSize: 20),),
                                                     SizedBox(height: data.size.height * 0.04,),
                                                     Center(
                                                       child: ElevatedButton(

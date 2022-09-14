@@ -2,6 +2,8 @@
 
 
 
+import 'dart:convert';
+
 import 'package:http/http.dart';
 import 'package:mobile_api/Controller/Export/export_screen.dart';
 import 'package:http/http.dart' as http;
@@ -17,31 +19,28 @@ class LoginScreen extends StatefulWidget {
 }
 
 
+
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _userNameController = TextEditingController();
  final TextEditingController _passwordController = TextEditingController();
 
-  Future<void> logIn(String username,password) async {
-  try{
-    Response response = await http.post(Uri.parse('http://58.65.169.108:999/MobileApp/Login'),
-  body: {
-    'strLoginName':username,
-    'strPasswordHash':password,
 
-},
+
+  Future logIn(String username,password) async {
+    Response response = await http.post(
+      Uri.parse('http://58.65.169.108:999/MobileApp/Login'),
+      headers: {"Accept": "Application/json"},
+      body: {
+        'strLoginName': username,
+        'strPasswordHash': password,
+      },
     );
-    if(response.statusCode ==200 ){
-      print("ok");
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const   DeliveryScreen()));
-    }else{
-      print("not");
+    if(response.statusCode ==200) {
+      var data = jsonDecode(response.body.toString());
+      return data;
     }
-      }
-      catch(e){
-    print(e.toString());
-  }
-}
 
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,9 +83,17 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             SizedBox(height: data.size.height * 0.05,),
             InkWell(
-              onTap: () {
-                  logIn(_userNameController.text.toString(),_passwordController.text.toString());
-              },
+              onTap: () async {
+
+                 var rep = await logIn(
+                      _userNameController.text.toString(),
+                      _passwordController.text.toString()
+                  );
+   Navigator.push(context, MaterialPageRoute(builder: (context) =>  DeliveryScreen(locationId: rep["PersonalID"],location: rep["Location"],personalID: rep["LocationId"],)));
+
+
+                   },
+
               child: Container(
                 height: 50,
                 decoration: BoxDecoration(
