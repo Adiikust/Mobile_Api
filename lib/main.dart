@@ -1,8 +1,7 @@
-
-
 import 'dart:io';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:mobile_api/Controller/Export/export_screen.dart';
+import 'package:mobile_api/Views/Delivery/delivery_Screen.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() async {
@@ -10,6 +9,7 @@ void main() async {
   Directory document = await getApplicationDocumentsDirectory();
   Hive.init(document.path);
   await Hive.openBox<String>("Adnan");
+  await Hive.openBox('isUserLogin');
   runApp(const MyApp());
 }
 
@@ -22,12 +22,18 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Mobile Api',
       theme: ThemeData(
-
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: const LoginScreen(),
+      home: ValueListenableBuilder(
+        valueListenable: Hive.box('isUserLogin').listenable(),
+        builder: (BuildContext context, Box box, Widget? child) => box.get(
+          'isUserLoggedIn',
+          defaultValue: false,
+        )
+            ? DeliveryScreen()
+            : const LoginScreen(),
+      ),
     );
   }
 }
-
